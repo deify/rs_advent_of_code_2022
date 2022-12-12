@@ -1,8 +1,7 @@
 use std::num::ParseIntError;
 use std::str::FromStr;
-use std::vec;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct Elf {
     calories: Vec<usize>,
 }
@@ -36,7 +35,7 @@ pub fn parse(input: &str) -> Vec<Elf> {
 }
 
 pub fn parse_err(input: &str) -> Result<Vec<Elf>, ParseIntError> {
-    input.split("\n\n").map(|x| Elf::from_str(x)).collect()
+    input.split("\n\n").map(Elf::from_str).collect()
 }
 
 #[aoc(day1, part1)]

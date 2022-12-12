@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum RockPaperScissorsResult {
     Lost,
     Draw,
@@ -29,7 +29,7 @@ impl FromStr for RockPaperScissorsResult {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum RockPaperScissors {
     Rock,
     Paper,
@@ -82,7 +82,7 @@ impl RockPaperScissors {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct StrategyGuide {
     opponent: RockPaperScissors,
     player_p1: RockPaperScissors,
