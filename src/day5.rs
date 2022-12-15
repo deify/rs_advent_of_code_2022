@@ -18,11 +18,10 @@ impl Stacks {
         match instruction {
             Instruction::Move(mv) => {
                 let from = &mut self.0[mv.from];
+                let drained : Vec<_> = from.0.drain(from.0.len() - mv.count..).collect();
+
                 let to = &mut self.0[mv.to];
-
-                let drained = from.0.drain(from.0.len() - mv.count..);
-
-                drained.for_each(|x| to.0.push(x));
+                drained.iter().for_each(|x| to.0.push(*x));
             }
         }
     }
