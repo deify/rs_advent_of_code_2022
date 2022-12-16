@@ -14,14 +14,24 @@ impl Stack {
 struct Stacks(Vec<Stack>);
 
 impl Stacks {
-    fn run_instruction(&mut self, instruction: &Instruction) {
+    fn run_instruction(&mut self, instruction: &Instruction, is_mover_9001: bool) {
         match instruction {
             Instruction::Move(mv) => {
-                let from = &mut self.0[mv.from];
-                let drained : Vec<_> = from.0.drain(from.0.len() - mv.count..).collect();
+                if is_mover_9001 {
+                    let from = &mut self.0[mv.from - 1];
+                    let drained: Vec<_> = from.0.drain(from.0.len() - mv.count..).collect();
 
-                let to = &mut self.0[mv.to];
-                drained.iter().for_each(|x| to.0.push(*x));
+                    let to = &mut self.0[mv.to - 1];
+                    drained.iter().for_each(|x| to.0.push(*x));
+                } else {
+                    for _ in 0..mv.count {
+                        let from = &mut self.0[mv.from - 1];
+                        let value = from.0.pop().expect("failed to pop items");
+
+                        let to = &mut self.0[mv.to - 1];
+                        to.0.push(value);
+                    }
+                }
             }
         }
     }
@@ -126,14 +136,32 @@ pub fn part1(input: &CratePlan) -> String {
     input
         .instructions
         .iter()
-        .for_each(|i| stacks.run_instruction(i));
+        .for_each(|i| stacks.run_instruction(i, false));
 
-    "".to_string()
+    let top_items: String = stacks
+        .0
+        .iter_mut()
+        .map(|x| x.0.pop().expect("empty stack"))
+        .collect();
+
+    top_items
 }
 
 #[aoc(day5, part2)]
-pub fn part2(input: &CratePlan) -> usize {
-    0
+pub fn part2(input: &CratePlan) -> String {
+    let mut stacks = input.stacks.clone();
+    input
+        .instructions
+        .iter()
+        .for_each(|i| stacks.run_instruction(i, true));
+
+    let top_items: String = stacks
+        .0
+        .iter_mut()
+        .map(|x| x.0.pop().expect("empty stack"))
+        .collect();
+
+    top_items
 }
 
 #[cfg(test)]
@@ -216,6 +244,6 @@ move 1 from 1 to 2";
 
     #[test]
     fn test_part2() {
-        assert_eq!(1, part2(&parse(TEST_INPUT)));
+        assert_eq!("MCD", part2(&parse(TEST_INPUT)));
     }
 }
